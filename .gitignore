@@ -3,3 +3,6 @@
 !.gitignore
 !README.md
 !Makefile
+!go.mod
+!go.sum
+!main.go
