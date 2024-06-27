@@ -1,3 +1,7 @@
 # dumb-sink
 
-A kafka sink w/HTTP connector.
+A dumb kafka sink w/http bridge.
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
