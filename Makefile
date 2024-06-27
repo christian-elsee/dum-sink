@@ -8,7 +8,7 @@ export NAME := $(shell basename $(PWD))
 export PATH := dist/bin:$(PATH)
 
 ## interface ####################################
-all: distclean dist lint build check
+all: distclean dist lint test build check
 install:
 
 ## main #########################################
@@ -21,13 +21,18 @@ dist:
 	mkdir -p $@ $@/bin
 
 lint:
+	: ## $@
 	go vet ./... ||:
 
-build: 
+test: 
 	: ## $@
-	go build -o dist/build main.go
+	go test ./...
 
-check: dist/build
+build: main.go
+	: ## $@
+	go build -o dist/target $<
+
+check: dist/target
 	: ## $@
 
 setup: assets
