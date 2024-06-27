@@ -8,7 +8,7 @@ export NAME := $(shell basename $(PWD))
 export PATH := dist/bin:$(PATH)
 
 ## interface ####################################
-all: distclean dist build check
+all: distclean dist lint build check
 install:
 
 ## main #########################################
@@ -20,56 +20,15 @@ dist:
 	: ## $@
 	mkdir -p $@ $@/bin
 
+lint:
+	go vet ./... ||:
 
-build: OVERLAYS ?=
-build: base.yaml
+build: 
 	: ## $@
-	cat $< $(OVERLAYS) \
-		| yq --yaml-output --explicit-start -s add \
-		| tee dist/cluster.yaml \
-		| md5sum \
-		| cut -f1 -d" " \
-		| tee dist/checksum
+	go build -o dist/build main.go
 
-	{ eksctl create cluster \
-			--dry-run \
-			-f dist/cluster.yaml \
-		| tee /dev/fd/100 \
-		| sed -E 's/Assume[^:]*\:\s*//' \
-				>dist/plan.yaml \
-	;} 100>&1
-
-check: dist/plan.yaml
+check: dist/build
 	: ## $@
-	<$< yq --yaml-output --explicit-start -re .
-
-install: dist/plan.yaml
-	: ## $@
-	eksctl create cluster \
-		-f $< \
-	||:
-	eksctl utils write-kubeconfig \
-		-f dist/plan.yaml	\
-		--kubeconfig dist/kubeconfig
-	eksctl get cluster -f $< -oyaml \
-		| tee dist/get-cluster.yaml
-
-	# create a tarball and publish to artifacts
-	tar -cv \
-			-C dist \
-			-f dist/cluster.tar.$(shell cat dist/checksum) \
-			--exclude="bin" \
-			--exclude="cluster.tar.$(shell cat dist/checksum)" \
-		.
-	cp dist/cluster.tar.$(shell cat dist/checksum) assets
-
-test:
-	: ## $@
-	prove -v
-
-clean: dist/plan.yaml
-	: ## $@
-	eksctl delete cluster -f $<
 
 setup: assets
 	: ## $@
