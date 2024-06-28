@@ -45,4 +45,3 @@ setup: assets
 
 assets:
 	: ## $@
-
