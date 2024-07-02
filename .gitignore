@@ -9,3 +9,5 @@
 !main_test.go
 !cmd
 !cmd/*.go
+!secrets
+!secrets/*.gpg
