@@ -1,0 +1,6 @@
+FROM confluentinc/confluent-cli:3.64.3 as artifactory
+
+FROM scratch
+COPY --from=artifactory /bin/confluent /confluent
+ENTRYPOINT [ "/confluent" ] 
+CMD [ "-h" ]

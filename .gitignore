@@ -11,3 +11,5 @@
 !cmd/*.go
 !secrets
 !secrets/*.gpg
+!docker
+!docker/*

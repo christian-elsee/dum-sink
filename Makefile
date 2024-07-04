@@ -35,7 +35,12 @@ build: main.go
 check: dist/target
 	: ## $@
 
-setup: assets
+init: init/go init/assets init/cluster init/topics
+	: ## $@
+	docker pull confluentinc/confluent-cli:3.64.3
+
+
+init/go:
 	: ## $@
 	pwd \
 		| awk -F/ '{ printf "%s/%s/%s", $$(NF-2), $$(NF-1), $$NF }' \
@@ -43,5 +48,6 @@ setup: assets
 	||:
 	go mod tidy
 
-assets:
+init/assets:
 	: ## $@
+
