@@ -30,6 +30,8 @@ test:
 
 build: main.go
 	: ## $@
+	docker build -<docker/confluent-cli \
+		-t local/confluent-cli 
 	go build -o dist/target $<
 
 check: dist/target
